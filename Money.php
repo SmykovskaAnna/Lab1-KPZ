@@ -3,6 +3,7 @@
 class Money {
     private int $whole;
     private int $cents;
+    private const UAH_TO_USD = 40; // 1 USD = 40 UAH
 
     public function __construct(int $whole, int $cents) {
         $this->setMoney($whole, $cents);
@@ -24,6 +25,16 @@ class Money {
 
     public function __toString(): string {
         return "{$this->whole}.{$this->cents}";
+    }
+
+    public function getPriceInUAH(): string {
+        return "{$this->whole}.{$this->cents} грн";
+    }
+
+    public function getPriceInUSD(): string {
+        $totalUAH = $this->whole + $this->cents / 100;
+        $totalUSD = $totalUAH / self::UAH_TO_USD;
+        return number_format($totalUSD, 2) . " USD";
     }
 }
 

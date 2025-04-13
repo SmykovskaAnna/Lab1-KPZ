@@ -22,8 +22,12 @@ class Product {
         return $this->name;
     }
 
-    public function getPrice(): string {
-        return $this->price->__toString();
+    public function getPriceInUAH(): string {
+        return $this->price->getPriceInUAH();
+    }
+
+    public function getPriceInUSD(): string {
+        return $this->price->getPriceInUSD();
     }
 
     public function getCategory(): string {

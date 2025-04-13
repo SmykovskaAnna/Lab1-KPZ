@@ -1,18 +1,29 @@
 <?php
 
+require_once 'Product.php';
+require_once 'Cart.php';
 require_once 'Reporting.php';
+require_once 'Warehouse.php';
+require_once 'UAH.php';
+require_once 'USD.php';
 
 $warehouse = new Warehouse();
 $reporting = new Reporting();
 
-$product1 = new Product("Ноутбук", new Money(25000, 99), "Електроніка");
-$product2 = new Product("Смартфон", new Money(15000, 49), "Електроніка");
+$product1 = new Product("Ноутбук", new Money(85000, 99), "Електроніка");
+$product2 = new Product("Смартфон", new Money(40000, 50), "Електроніка");
 
 $reporting->registerIncome($product1, 10, $warehouse);
 $reporting->registerIncome($product2, 15, $warehouse);
 
+$cart = new Cart();
+$cart->addToCart($product1, 2);
+$cart->addToCart($product2, 1);
+
 $products = $warehouse->getProducts();
 $invoices = $reporting->getIncomeInvoices();
+$cartItems = $cart->getItems();
+$total = $cart->getTotal();
 
 ?>
 
@@ -35,7 +46,8 @@ $invoices = $reporting->getIncomeInvoices();
     <tr>
         <th>Категорія</th>
         <th>Назва</th>
-        <th>Ціна</th>
+        <th>Ціна (грн)</th>
+        <th>Ціна (USD)</th>
         <th>Кількість</th>
         <th>Дата надходження</th>
     </tr>
@@ -43,7 +55,8 @@ $invoices = $reporting->getIncomeInvoices();
         <tr>
             <td><?= htmlspecialchars($item['product']->getCategory()) ?></td>
             <td><?= htmlspecialchars($item['product']->getName()) ?></td>
-            <td><?= htmlspecialchars($item['product']->getPrice()) ?> грн</td>
+            <td><?= htmlspecialchars($item['product']->getPriceInUAH()) ?></td>
+            <td><?= htmlspecialchars($item['product']->getPriceInUSD()) ?></td>
             <td><?= htmlspecialchars($item['quantity']) ?></td>
             <td><?= htmlspecialchars($item['date_added']) ?></td>
         </tr>
@@ -65,6 +78,30 @@ $invoices = $reporting->getIncomeInvoices();
         </tr>
     <?php endforeach; ?>
 </table>
+
+<h2>Корзина замовлень</h2>
+<table>
+    <tr>
+        <th>Назва</th>
+        <th>Кількість</th>
+        <th>Ціна (грн)</th>
+        <th>Ціна (USD)</th>
+    </tr>
+    <?php foreach ($cartItems as $item): ?>
+        <tr>
+            <td><?= htmlspecialchars($item['product']->getName()) ?></td>
+            <td><?= htmlspecialchars($item['quantity']) ?></td>
+            <td><?= htmlspecialchars($item['product']->getPriceInUAH()) ?></td>
+            <td><?= htmlspecialchars($item['product']->getPriceInUSD()) ?></td>
+        </tr>
+    <?php endforeach; ?>
+    <tr>
+        <td colspan="2"><strong>Загалом:</strong></td>
+        <td><strong><?= $total ?> грн</strong></td>
+        <td><strong><?= $cart->getTotalUSD() ?> USD</strong></td>
+    </tr>
+</table>
+
 
 </body>
 </html>
